@@ -1,18 +1,25 @@
-import { getCategories } from '@/lib/api'
-import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
-import HomePageClient from './HomePageClient'
+'use client'
 
-export default async function HomePage() {
-	const queryClient = new QueryClient()
+import { useState } from 'react'
+import useDebounce from '@/hooks/useDebounce'
+import SearchInput from '@/components/SearchInput'
+import ImagesGrid from '@/components/ImagesGrid'
+import { useImages } from '@/hooks/useImages'
 
-	await queryClient.prefetchQuery({
-		queryKey: ['images', 'categories'],
-		queryFn: () => getCategories(),
-	})
+export default function HomePage() {
+	const [search, setSearch] = useState('')
+	const debouncedSearch = useDebounce(search, 300)
+	const { data: images = [], isLoading } = useImages()
 
 	return (
-		<HydrationBoundary state={dehydrate(queryClient)}>
-			<HomePageClient />
-		</HydrationBoundary>
+		<main className='w-[80%]'>
+			<div className='pt-10'>
+				<h1 className='text-3xl font-bold capitalize mb-4 text-primary'>Все категории</h1>
+				<SearchInput search={search} onSearchChange={setSearch} />
+				<div className='mt-8'>
+					<ImagesGrid images={images} search={debouncedSearch} isLoading={isLoading} />
+				</div>
+			</div>
+		</main>
 	)
 }

@@ -1,6 +1,13 @@
 import { NextResponse } from 'next/server'
 
-const categories = [
+interface ICategory {
+	id: number
+	name: string
+	image: string
+	type: string
+}
+
+const categories: ICategory[] = [
 	{
 		id: 1,
 		name: 'Животные',
