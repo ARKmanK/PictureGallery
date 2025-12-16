@@ -18,7 +18,7 @@ const HomePage = () => {
 	}, [])
 
 	return (
-		<main className='w-[80%] mt-50'>
+		<main className='w-[80%]'>
 			<div className='pt-10'>
 				<h1 className='text-3xl font-bold capitalize mb-4 text-primary'>Все категории</h1>
 				<SearchInput search={search} onSearchChange={handleSearchChange} />
