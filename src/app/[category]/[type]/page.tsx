@@ -8,21 +8,19 @@ import ImagesGrid from '@/components/ImagesGrid'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import { useImages } from '@/hooks/useImages'
+import { useTitle } from '@/hooks/useTitle'
+import { usePagination } from '@/hooks/usePagination'
 
-export default function TypePage() {
+const TypePage = () => {
 	const [search, setSearch] = useState('')
-	const debouncedSearch = useDebounce(search, 300)
 	const params = useParams()
 	const router = useRouter()
-
+	const { data: typeImages = [], isLoading } = useImages()
+	const debouncedSearch = useDebounce(search, 300)
 	const category = params.category as string
 	const type = params.type as string
-
-	const { data: typeImages = [], isLoading } = useImages()
-
-	const getAnimalName = () => {
-		return type.charAt(0).toUpperCase() + type.slice(1)
-	}
+	const title = useTitle(category, type)
+	const { paginatedItems, loadMore, getMore } = usePagination(typeImages, 12)
 
 	if (!category || !type) {
 		return <div>Загрузка...</div>
@@ -40,19 +38,23 @@ export default function TypePage() {
 					Назад к {category}
 				</Button>
 				<div className='mb-6'>
-					<h1 className='text-3xl font-bold capitalize mb-2'>{getAnimalName()}</h1>
+					<h1 className='text-3xl font-bold capitalize mb-2'>{title}</h1>
 				</div>
 				<SearchInput search={search} onSearchChange={setSearch} />
 				<div className='mt-8'>
 					<ImagesGrid
-						images={typeImages}
+						images={paginatedItems}
 						search={debouncedSearch}
 						isLoading={isLoading}
 						category={category}
 						type={type}
+						onLoadMore={loadMore}
+						getMore={getMore}
 					/>
 				</div>
 			</div>
 		</main>
 	)
 }
+
+export default TypePage

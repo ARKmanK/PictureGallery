@@ -2,16 +2,16 @@ import { IImage } from '@/types/images'
 
 const API = process.env.API_URL || 'http://localhost:3000'
 
-interface FetchImagesParams {
+interface IFetchImages {
 	category?: string
 	type?: string
 }
 
-interface FilterOptions {
+interface IFilterOptions {
 	[key: string]: string[]
 }
 
-export const fetchImages = async ({ category, type }: FetchImagesParams = {}) => {
+export const fetchImages = async ({ category, type }: IFetchImages = {}) => {
 	let endpoint = ''
 
 	if (!category && !type) {
@@ -27,11 +27,9 @@ export const fetchImages = async ({ category, type }: FetchImagesParams = {}) =>
 	return res.json() as Promise<IImage[]>
 }
 
-export const fetchFilterOptions = async (path: string): Promise<FilterOptions> => {
+export const fetchFilterOptions = async (path: string): Promise<IFilterOptions> => {
 	const segments = path.split('/').filter(Boolean)
-
 	if (segments.length === 0) return {}
-
 	const endpoint =
 		segments.length === 1
 			? `/api/images/${segments[0]}`
@@ -40,11 +38,10 @@ export const fetchFilterOptions = async (path: string): Promise<FilterOptions> =
 	try {
 		const response = await fetch(endpoint)
 		const data = await response.json()
-
-		if (!Array.isArray(data) || data.length === 0) return {}
-
 		const IGNORE_FIELDS = ['id', 'name', 'image', 'type', 'category', 'tags', 'date']
 		const options: Record<string, Set<string>> = {}
+
+		if (!Array.isArray(data) || data.length === 0) return {}
 
 		data.forEach(item => {
 			Object.keys(item).forEach(key => {
@@ -58,7 +55,7 @@ export const fetchFilterOptions = async (path: string): Promise<FilterOptions> =
 			})
 		})
 
-		const result: FilterOptions = {}
+		const result: IFilterOptions = {}
 		Object.keys(options).forEach(key => {
 			result[key] = Array.from(options[key]).sort()
 		})
@@ -67,5 +64,37 @@ export const fetchFilterOptions = async (path: string): Promise<FilterOptions> =
 	} catch (error) {
 		console.error('Error fetching filter options:', error)
 		return {}
+	}
+}
+
+export const getTitle = async (category: string, type?: string): Promise<string> => {
+	try {
+		if (type) {
+			const response = await fetch(`/api/images/${category}`)
+			const data = await response.json()
+
+			if (Array.isArray(data)) {
+				const foundItem = data.find((item: IImage) => item.type === type)
+				if (foundItem?.name) {
+					return foundItem.name
+				}
+			}
+			return type.charAt(0).toUpperCase() + type.slice(1)
+		}
+
+		const response = await fetch('/api/images/categories')
+		const data = await response.json()
+
+		if (Array.isArray(data)) {
+			const foundItem = data.find((item: IImage) => item.type === category)
+			if (foundItem?.name) {
+				return foundItem.name
+			}
+		}
+		return category.charAt(0).toUpperCase() + category.slice(1)
+	} catch (error) {
+		console.error('Error getting title:', error)
+		const fallback = type || category
+		return fallback.charAt(0).toUpperCase() + fallback.slice(1)
 	}
 }

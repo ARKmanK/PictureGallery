@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { SearchIcon } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
 
 interface ImagesGridProps {
 	search: string
@@ -11,9 +12,19 @@ interface ImagesGridProps {
 	isLoading?: boolean
 	category?: string
 	type?: string
+	onLoadMore?: () => void
+	getMore?: boolean
 }
 
-const ImagesGrid = ({ search, images = [], isLoading, category, type }: ImagesGridProps) => {
+const ImagesGrid = ({
+	search,
+	images = [],
+	isLoading,
+	category,
+	type,
+	onLoadMore,
+	getMore = false,
+}: ImagesGridProps) => {
 	const router = useRouter()
 
 	const filteredImages = search
@@ -48,7 +59,7 @@ const ImagesGrid = ({ search, images = [], isLoading, category, type }: ImagesGr
 
 	return (
 		<>
-			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-7'>
 				{filteredImages.map((image: any) => (
 					<Card
 						key={image.id}
@@ -66,8 +77,7 @@ const ImagesGrid = ({ search, images = [], isLoading, category, type }: ImagesGr
 									sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
 								/>
 							</div>
-
-							<div className='absolute bottom-0 left-0 right-0 p-4 pointer-events-none z-10'>
+							<div className='absolute bottom-0 left-0 right-0 pb-2 pointer-events-none z-10'>
 								<div className='flex items-center justify-center'>
 									<SearchIcon size={21} color='white' />
 									<p className='text-white font-semibold text-nowrap ml-1'>{image.name}</p>
@@ -77,6 +87,15 @@ const ImagesGrid = ({ search, images = [], isLoading, category, type }: ImagesGr
 					</Card>
 				))}
 			</div>
+
+			{getMore && onLoadMore && (
+				<div className='text-center py-8 mt-4'>
+					<Button onClick={onLoadMore} variant='outline' className='px-8'>
+						Загрузить еще
+					</Button>
+				</div>
+			)}
+
 			{filteredImages.length === 0 && (
 				<div className='text-center py-12'>
 					<p className='text-gray-500'>

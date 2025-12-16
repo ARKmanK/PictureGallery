@@ -15,7 +15,7 @@ const ThemeToggler = () => {
 
 	return (
 		<>
-			<div className='bg-background rounded-xl p-2 fixed top-7 right-15'>
+			<div className='bg-background rounded-xl p-2 fixed top-7 right-3 sm:right-15'>
 				<DropdownMenu modal={false}>
 					<DropdownMenuTrigger asChild>
 						<Button variant='outline' size='icon'>

@@ -7,7 +7,6 @@ export const useImages = () => {
 
 	const getParamsFromPath = () => {
 		const segments = pathname.split('/').filter(Boolean)
-
 		if (segments.length === 0) {
 			return {}
 		} else if (segments.length === 1) {
@@ -15,7 +14,6 @@ export const useImages = () => {
 		} else if (segments.length === 2) {
 			return { category: segments[0], type: segments[1] }
 		}
-
 		return {}
 	}
 
