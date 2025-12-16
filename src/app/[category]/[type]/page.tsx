@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import useDebounce from '@/hooks/useDebounce'
 import SearchInput from '@/components/SearchInput'
@@ -26,6 +26,10 @@ const TypePage = () => {
 		return <div>Загрузка...</div>
 	}
 
+	const handleSearchChange = useCallback((value: string) => {
+		setSearch(value)
+	}, [])
+
 	return (
 		<main className='w-[80%]'>
 			<div className='pt-10'>
@@ -40,7 +44,7 @@ const TypePage = () => {
 				<div className='mb-6'>
 					<h1 className='text-3xl font-bold capitalize mb-2'>{title}</h1>
 				</div>
-				<SearchInput search={search} onSearchChange={setSearch} />
+				<SearchInput search={search} onSearchChange={handleSearchChange} />
 				<div className='mt-8'>
 					<ImagesGrid
 						images={paginatedItems}

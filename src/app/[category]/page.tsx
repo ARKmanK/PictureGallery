@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import useDebounce from '@/hooks/useDebounce'
 import SearchInput from '@/components/SearchInput'
@@ -38,6 +38,10 @@ const CategoryPage = () => {
 
 	const { paginatedItems, loadMore, getMore } = usePagination(filteredImages, 12)
 
+	const handleSearchChange = useCallback((value: string) => {
+		setSearch(value)
+	}, [])
+
 	return (
 		<main className='w-[80%]'>
 			<div className='pt-10'>
@@ -47,7 +51,7 @@ const CategoryPage = () => {
 				</Button>
 				<h1 className='text-3xl font-bold capitalize mb-4 text-primary'>{title}</h1>
 				<div className='flex space-x-4 items-center'>
-					<SearchInput search={search} onSearchChange={setSearch} />
+					<SearchInput search={search} onSearchChange={handleSearchChange} />
 					<FilterPanel onFilterChange={setFilters} />
 				</div>
 				<div className='mt-8'>

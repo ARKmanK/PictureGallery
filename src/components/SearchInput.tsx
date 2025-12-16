@@ -2,6 +2,7 @@
 
 import { SearchIcon } from 'lucide-react'
 import { Input } from './ui/input'
+import { memo } from 'react'
 
 interface SearchInputProps {
 	search: string
@@ -23,4 +24,4 @@ const SearchInput = ({ search, onSearchChange }: SearchInputProps) => {
 	)
 }
 
-export default SearchInput
+export default memo(SearchInput)
